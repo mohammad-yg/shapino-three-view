@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Directory, DirectoryFile, DirectoryFileDto, DirectoryFolder, DirectoryFolderDto, DirectoryType } from "../utils/directory";
+import { adaptDirectoryDtoToDto, Directory, DirectoryFile, DirectoryFileDto, DirectoryFolder, DirectoryFolderDto, DirectoryType, getDirectoryRoot } from "../utils/directory";
 
 const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto)[]) => {
     const [rootDirectory, setRootDirectory] = useState<DirectoryFolder>({
@@ -9,6 +9,7 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
         subs: []
     });
 
+    // initial
     useEffect(() => {
         let root = {
             parent: null,
@@ -17,10 +18,12 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
             subs: [],
         } as DirectoryFolder
 
-        root.subs = initialDirectories.map(_ => mapDto(_, root));
+        root.subs = initialDirectories.map(_ => adaptDirectoryDtoToDto(_, root));
         setRootDirectory(root)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    // add a directory (node) tp currentDir subs
     const addChild = (name: string, type: DirectoryType, currentDir: DirectoryFolder) => {
         currentDir.subs.push({
             name: name,
@@ -31,15 +34,17 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
 
         currentDir.subs = [...currentDir.subs];
 
-        let currentRoot = getRoot(currentDir);
+        let currentRoot = getDirectoryRoot(currentDir);
 
+        //save changes (set updated root directory)
         setRootDirectory({ ...currentRoot });
     }
+
 
     const renameDir = (name: string, currentDir: Directory) => {
         currentDir.name = name;
 
-        let currentRoot = getRoot(currentDir);
+        let currentRoot = getDirectoryRoot(currentDir);
 
         setRootDirectory({ ...currentRoot });
     }
@@ -47,9 +52,10 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
     const removeDir = (currentDir: Directory) => {
         let parent = currentDir.parent as DirectoryFolder;
 
+        //remove node from parent subs
         parent.subs.splice(parent.subs.indexOf(currentDir as DirectoryFile | DirectoryFolder), 1)
 
-        let currentRoot = getRoot(currentDir);
+        let currentRoot = getDirectoryRoot(currentDir);
 
         setRootDirectory({ ...currentRoot });
     }
@@ -60,34 +66,6 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
         addChild,
         renameDir,
         removeDir
-    }
-}
-
-const getRoot = (dir: Directory): DirectoryFolder => {
-    if (dir.parent === null)
-        return dir as DirectoryFolder
-
-    return getRoot(dir.parent)
-}
-
-const mapDto = (dto: DirectoryFolderDto | DirectoryFileDto, parent: Directory): DirectoryFolder | DirectoryFile => {
-    if (dto.type === 'file')
-        return {
-            name: dto.name,
-            type: 'file',
-            parent: parent
-        }
-    else {
-        var directory: DirectoryFolder = {
-            name: dto.name,
-            type: 'folder',
-            parent: parent,
-            subs: []
-        }
-
-        directory.subs = dto.subs.map(dtoSub => mapDto(dtoSub, directory))
-
-        return directory
     }
 }
 

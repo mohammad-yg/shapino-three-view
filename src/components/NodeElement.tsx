@@ -109,7 +109,7 @@ export const NodeElement: FC<Props> = ({
               <VscNewFolder
                 className="cursor-pointer"
                 onClick={() =>
-                  onAddSub("new-folder", "file", directory as DirectoryFolder)
+                  onAddSub("new-folder", "folder", directory as DirectoryFolder)
                 }
               />
             </>

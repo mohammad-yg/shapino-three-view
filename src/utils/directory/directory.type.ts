@@ -1,8 +1,9 @@
 type DirectoryType = 'file' | 'folder'
 
 interface Directory {
+    parent: Directory | null,
     name: string,
-    type: DirectoryType
+    type: DirectoryType,
 }
 
 interface DirectoryFile extends Directory {
@@ -14,9 +15,27 @@ interface DirectoryFolder extends Directory {
     subs: (DirectoryFile | DirectoryFolder)[]
 }
 
+interface DirectoryDto {
+    name: string,
+    type: DirectoryType,
+}
+
+interface DirectoryFileDto extends DirectoryDto {
+    type: 'file'
+}
+
+interface DirectoryFolderDto extends DirectoryDto {
+    type: 'folder'
+    subs: (DirectoryFileDto | DirectoryFolderDto)[],
+}
+
 export type {
+    DirectoryType,
+
     Directory,
     DirectoryFile,
     DirectoryFolder,
-    DirectoryType
+    DirectoryDto,
+    DirectoryFileDto,
+    DirectoryFolderDto,
 }

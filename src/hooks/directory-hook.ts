@@ -44,11 +44,22 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
         setRootDirectory({ ...currentRoot });
     }
 
+    const removeDir = (currentDir: Directory) => {
+        let parent = currentDir.parent as DirectoryFolder;
+
+        parent.subs.splice(parent.subs.indexOf(currentDir as DirectoryFile | DirectoryFolder), 1)
+
+        let currentRoot = getRoot(currentDir);
+
+        setRootDirectory({ ...currentRoot });
+    }
+
 
     return {
         rootDirectory,
         addChild,
-        renameDir
+        renameDir,
+        removeDir
     }
 }
 

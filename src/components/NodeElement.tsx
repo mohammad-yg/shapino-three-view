@@ -12,6 +12,7 @@ import {
   VscFile,
   VscNewFile,
   VscNewFolder,
+  VscTrash,
   VscTriangleRight,
 } from "react-icons/vsc";
 import { Directory, DirectoryFolder, DirectoryType } from "../utils/directory";
@@ -26,6 +27,7 @@ type Props = {
     currentDir: DirectoryFolder
   ) => void;
   onRename: (name: string) => void;
+  onRemove: () => void;
 };
 
 export const NodeElement: FC<Props> = ({
@@ -34,6 +36,7 @@ export const NodeElement: FC<Props> = ({
   directory,
   onAddSub,
   onRename,
+  onRemove,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -60,6 +63,10 @@ export const NodeElement: FC<Props> = ({
 
   const handleClickEdit = () => {
     setEditMode(true);
+  };
+
+  const handleClickTrash = () => {
+    onRemove();
   };
 
   useEffect(() => {
@@ -90,6 +97,7 @@ export const NodeElement: FC<Props> = ({
           <span hidden={editMode}>{directory.name}</span>
         </div>
         <div className="flex items-center gap-2">
+          <VscTrash className="cursor-pointer" onClick={handleClickTrash} />
           {directory.type === "folder" && (
             <>
               <VscNewFile

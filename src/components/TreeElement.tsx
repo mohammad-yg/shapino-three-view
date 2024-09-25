@@ -15,9 +15,15 @@ type Props = {
     currentDir: DirectoryFolder
   ) => void;
   onRename: (name: string, currentDir: Directory) => void;
+  onRemove: (currentDir: Directory) => void;
 };
 
-export const TreeElement: FC<Props> = ({ directory, onAddSub, onRename }) => {
+export const TreeElement: FC<Props> = ({
+  directory,
+  onAddSub,
+  onRename,
+  onRemove,
+}) => {
   const [isCollapse, setIsCollapse] = useState(false);
 
   const handleCollapseButtonClick = () => {
@@ -32,11 +38,17 @@ export const TreeElement: FC<Props> = ({ directory, onAddSub, onRename }) => {
         directory={directory}
         onAddSub={onAddSub}
         onRename={(name: string) => onRename(name, directory)}
+        onRemove={() => onRemove(directory)}
       />
       {directory.type === "folder" &&
         isCollapse &&
         directory.subs.map((dr) => (
-          <TreeElement directory={dr} onAddSub={onAddSub} onRename={onRename} />
+          <TreeElement
+            directory={dr}
+            onAddSub={onAddSub}
+            onRename={onRename}
+            onRemove={onRemove}
+          />
         ))}
     </div>
   );

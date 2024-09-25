@@ -36,10 +36,19 @@ const useDirectory = (initialDirectories: (DirectoryFolderDto | DirectoryFileDto
         setRootDirectory({ ...currentRoot });
     }
 
+    const renameDir = (name: string, currentDir: Directory) => {
+        currentDir.name = name;
+
+        let currentRoot = getRoot(currentDir);
+
+        setRootDirectory({ ...currentRoot });
+    }
+
 
     return {
         rootDirectory,
-        addChild
+        addChild,
+        renameDir
     }
 }
 

@@ -2,7 +2,7 @@ import { TreeElement } from "./TreeElement";
 import { useDirectory } from "../hooks/directory-hook";
 
 export const TreeView = () => {
-  const { rootDirectory, addChild } = useDirectory([
+  const { rootDirectory, addChild, renameDir } = useDirectory([
     {
       name: "file-1",
       type: "file",
@@ -41,7 +41,7 @@ export const TreeView = () => {
   return (
     <div className="w-[300px]">
       {rootDirectory.subs.map((sub, index) => (
-        <TreeElement key={index} directory={sub} onAddSub={addChild} />
+        <TreeElement key={index} directory={sub} onAddSub={addChild} onRename={renameDir} />
       ))}
     </div>
   );

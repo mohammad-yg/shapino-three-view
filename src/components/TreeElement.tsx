@@ -1,11 +1,11 @@
 import { FC, useState } from "react";
 import {
+  Directory,
   DirectoryFile,
   DirectoryFolder,
   DirectoryType,
 } from "../utils/directory";
-import { FileElement } from "./FileElement";
-import { FolderElement } from "./FolderElement";
+import { NodeElement } from "./NodeElement";
 
 type Props = {
   directory: DirectoryFile | DirectoryFolder;
@@ -14,9 +14,10 @@ type Props = {
     type: DirectoryType,
     currentDir: DirectoryFolder
   ) => void;
+  onRename: (name: string, currentDir: Directory) => void;
 };
 
-export const TreeElement: FC<Props> = ({ directory, onAddSub }) => {
+export const TreeElement: FC<Props> = ({ directory, onAddSub, onRename }) => {
   const [isCollapse, setIsCollapse] = useState(false);
 
   const handleCollapseButtonClick = () => {
@@ -25,27 +26,17 @@ export const TreeElement: FC<Props> = ({ directory, onAddSub }) => {
 
   return (
     <div className="ms-3">
-      {directory.type === "file" && (
-        <FileElement
-          name={directory.name}
-          onRename={function (name: string): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
-      )}
-      {directory.type === "folder" && (
-        <FolderElement
-          onClickCollapse={handleCollapseButtonClick}
-          isCollapse={isCollapse}
-          name={directory.name}
-          onAddFile={(name: string) => onAddSub(name, "file", directory)}
-          onAddFolder={(name: string) => onAddSub(name, "folder", directory)}
-        />
-      )}
+      <NodeElement
+        onClickCollapse={handleCollapseButtonClick}
+        isCollapse={isCollapse}
+        directory={directory}
+        onAddSub={onAddSub}
+        onRename={(name: string) => onRename(name, directory)}
+      />
       {directory.type === "folder" &&
         isCollapse &&
         directory.subs.map((dr) => (
-          <TreeElement directory={dr} onAddSub={onAddSub} />
+          <TreeElement directory={dr} onAddSub={onAddSub} onRename={onRename} />
         ))}
     </div>
   );
